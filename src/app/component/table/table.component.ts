@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Playlist } from 'src/app/model/playlist.interface';
 import { Song } from 'src/app/model/song.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { MusicService } from 'src/app/services/music.service';
 
 @Component({
@@ -12,21 +13,32 @@ export class TableComponent implements OnInit {
 
   playlists: Playlist[] = [];
 
-  constructor(private musicService: MusicService) { }
+  constructor(private musicService: MusicService, private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.musicService.playLists().subscribe( (data: any) => {
-      this.playlists = data['data'];
-      console.log(this.playlists);
+
+    this.authService.obtenerToken().subscribe( (token) => {
+      this.musicService.playLists(token.idToken).subscribe( (data: any) => {
+        this.playlists = data['data'];
+        console.log(this.playlists);
+      });
     });
+
   }
 
   borrarPlayList(playlist: Playlist) {
 
-    this.musicService.deletePlaylist(playlist.nombre).subscribe( () => {
+    
+    this.authService.obtenerToken().subscribe( (token) => {
+
+      
+    this.musicService.deletePlaylist(playlist.nombre, token.idToken).subscribe( () => {
       console.log("borrado");
       this.ngOnInit();
     });
+
+    });
+
   }
 
 }

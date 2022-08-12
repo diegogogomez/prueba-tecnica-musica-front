@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -9,14 +9,18 @@ export class MusicService {
 
   constructor(private http: HttpClient) { }
   
-  configUrl = 'http://104.199.108.132:8081';
+  configUrl = 'http://localhost:8081';
 
-  playLists(): Observable<any> {
-    return this.http.get<any>(this.configUrl + "/api/v1/lists");
+  playLists(token: String): Observable<any> {
+    var headers = new HttpHeaders()
+   .set('Authorization', "" + token)    
+    return this.http.get<any>(this.configUrl + "/api/v1/lists", {'headers':headers});
   }
 
-  deletePlaylist(nombre: String): Observable<any> {
-    return this.http.delete<any>(this.configUrl + `/api/v1/lists/${nombre}`);
+  deletePlaylist(nombre: String, token: String): Observable<any> {
+    var headers = new HttpHeaders()
+   .set('Authorization', "" + token) 
+    return this.http.delete<any>(this.configUrl + `/api/v1/lists/${nombre}`, {'headers':headers});
   }
 
 }
